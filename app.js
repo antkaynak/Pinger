@@ -2,18 +2,26 @@
 const ping = require('ping');
 const Email = require('email-templates');
 const nodemailer = require('nodemailer');
+var argv = require('minimist')(process.argv.slice(2));
 
 
+console.log(argv);
+const host = argv.host;
+const from = argv.from;
+const password = argv.password;
+const to = argv.to;
 
+if(host == undefined || from == undefined || password == undefined || to === undefined){
+    return console.log('Invalid params. Usage --host ip --from emailfrom --password emailpassword --to emailto');
+}
 
-const host = 'google.com';
 let pingCount = 1;
 let intervalCount = 15000;
 let resetIntervalCount = 60000;
 
 const email = new Email({
     message: {
-      from: 'keyistapp@gmail.com'
+      from: from
     },
     // uncomment below to send emails in development/test env:
     send: true,
@@ -34,7 +42,7 @@ let pingUrl = function() {
                 .send({
                 template: 'mars',
                 message: {
-                to: 'email@gmail.com'
+                to: to
                 },
                 locals: {
                 name: 'User'
@@ -46,8 +54,8 @@ let pingUrl = function() {
                     const transporter = nodemailer.createTransport({
                         service: 'gmail',
                         auth: {
-                               user: 'email@gmail.com',
-                               pass: 'password'
+                               user: from,
+                               pass: password
                            }
                        });
 
